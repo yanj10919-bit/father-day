@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<title>Only You</title>
+<style>
+  * {
+    box-sizing: border-box;
+  }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: "Helvetica Neue", "Segoe UI", Arial, sans-serif;
+    background: radial-gradient(circle at top, rgba(255, 234, 255, 0.14), transparent 20%),
+                radial-gradient(circle at bottom left, rgba(255, 206, 255, 0.16), transparent 18%),
+                linear-gradient(180deg, #0f1222 0%, #1a1f35 100%);
+    color: #fdfbff;
+    overflow-x: hidden;
+  }
+  .background-glow {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    background: radial-gradient(circle at 20% 20%, rgba(255, 204, 221, 0.22), transparent 18%),
+                radial-gradient(circle at 80% 15%, rgba(187, 221, 255, 0.18), transparent 16%),
+                radial-gradient(circle at 50% 80%, rgba(201, 255, 240, 0.14), transparent 18%);
+  }
+  .container {
+    position: relative;
+    z-index: 1;
+    min-height: 100vh;
+    padding: 40px 24px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .card {
+    width: min(760px, 100%);
+    background: rgba(17, 23, 48, 0.92);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 32px;
+    box-shadow: 0 30px 90px rgba(0, 0, 0, 0.28);
+    overflow: hidden;
+    backdrop-filter: blur(18px);
+  }
+  .hero {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    align-items: center;
+    padding: 34px 36px 0;
+  }
+  .hero h1 {
+    margin: 0;
+    font-size: clamp(2.1rem, 4vw, 3.4rem);
+    line-height: 1.05;
+    letter-spacing: -0.04em;
+  }
+  .hero p {
+    margin: 18px 0 0;
+    color: #dcd8f2;
+    line-height: 1.8;
+    max-width: 42rem;
+  }
+  .hero img {
+    width: 100%;
+    border-radius: 24px;
+    object-fit: cover;
+    aspect-ratio: 4 / 3;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.08);
+  }
+  .gate {
+    padding: 32px 36px 28px;
+    display: grid;
+    gap: 22px;
+  }
+  .gate-title {
+    margin: 0;
+    font-size: 1.5rem;
+  }
+  .gate-copy {
+    margin: 0;
+    color: #c7c3e6;
+    line-height: 1.8;
+  }
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 14px;
+  }
+  .image-upload {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    padding: 12px 18px;
+    border-radius: 18px;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    background: rgba(255, 255, 255, 0.08);
+    color: #f7f4ff;
+    cursor: pointer;
+    font-size: 0.95rem;
+    width: fit-content;
+  }
+  .image-upload input {
+    display: none;
+  }
+  input {
+    width: 100%;
+    padding: 16px 18px;
+    border-radius: 18px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.06);
+    color: #fbfbff;
+    font-size: 1rem;
+    outline: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+  input:focus {
+    border-color: rgba(216, 190, 255, 0.9);
+    box-shadow: 0 0 0 4px rgba(156, 115, 255, 0.12);
+  }
+  button {
+    padding: 16px 26px;
+    border-radius: 18px;
+    border: none;
+    background: linear-gradient(135deg, #ff9dd9 0%, #a57dff 100%);
+    color: #11101b;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 18px 30px rgba(255, 133, 194, 0.26);
+  }
+  .hint {
+    margin: 0;
+    color: #d2c9ff;
+    font-size: 0.95rem;
+  }
+  .story {
+    display: none;
+    padding: 0 36px 34px;
+  }
+  .story-content {
+    margin: 0;
+    color: #f2efff;
+    line-height: 1.9;
+    white-space: pre-wrap;
+    font-size: 1.02rem;
+  }
+  .story-note {
+    margin-top: 22px;
+    color: #c2c0e5;
+    font-size: 0.95rem;
+  }
+  .shake {
+    animation: shake 0.28s ease;
+  }
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-8px); }
+    50% { transform: translateX(8px); }
+    75% { transform: translateX(-6px); }
+  }
+  .fade-in {
+    animation: fadeIn 0.8s ease both;
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @media (max-width: 760px) {
+    .hero {
+      grid-template-columns: 1fr;
+    }
+  }
+  @media (max-width: 520px) {
+    .card {
+      border-radius: 24px;
+    }
+    .gate {
+      padding: 28px 22px 22px;
+    }
+    .hero {
+      gap: 18px;
+    }
+    .form-row {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+</head>
+<body>
+<div class="background-glow"></div>
+<div class="container">
+  <div class="card fade-in">
+    <div class="hero">
+      <div>
+        <h1>Only You</h1>
+        <p>这是一个给你专门准备的页面。输入正确的密码后，会解锁一段我想对你说的话，下面也可以放一张你喜欢的图片。</p>
+      </div>
+      <img id="heroImage" src="love-fqj.jpg" alt="你的封面图片">
+    </div>
+    <div class="gate" id="gate">
+      <h2 class="gate-title">🔐 专属问题</h2>
+      <p class="gate-copy">jy的自行车密码锁密码是？</p>
+      <div class="form-row" id="inputArea">
+        <input id="answer" placeholder="输入答案" autocomplete="off">
+        <button onclick="check()">解锁</button>
+      </div>
+      <label class="image-upload" for="imageInput">
+        选择本地图片
+        <input id="imageInput" type="file" accept="image/*">
+      </label>
+      <p class="hint" id="hint">提示：这是一个很温柔的数字。🤍</p>
+    </div>
+    <div class="story" id="story">
+      <p class="story-content" id="storyContent"></p>
+      <p class="story-note">你可以把上面图片的链接改成本地图片路径，比如 <code>images/your-photo.jpg</code>，或直接换成你想要的图片 URL。</p>
+    </div>
+  </div>
+</div>
+<script>
+const text = `
+首先谢谢你和我分享这期播客。
+
+审美是会变，甚至连red flag也是会变的。我很认同她们说的。
+
+但是在我看来，不需要把它做得那么沉重，或者用社会学、哲学、或者人际学去区分和定义。甚至也不用想太多去理解哈哈。
+
+我觉得情感其实是一个很纯粹的事情。比如说我见到你的感觉，就是我非常想抱抱你，我就是想冲上来的那种。因为你给我安全感，你给我像大姐姐的温暖的感觉，我非常想抱着你，我甚至想缩在你的怀里。我对其他人都没有这种感觉。
+
+我觉得我们需要平衡角色，同时也需要做的是筛选。你需要调整自己，但是没有必要一直对自己很严苛，因为我们不可能一开始就很完善、很完美。我们也需要一步一步成长。
+
+还有一点，我听到他们说欧洲人不理解为什么亚洲人活得这么累。我觉得忙和累是自己可以控制的。人不可以很忙，因为你看，忙是心 + 亡，是心灵的死亡。对吧？（这是我在蒋勋《品味四讲》这本书里学到的）所以我们每天都需要抽出一点时间做自己的事情。比如打打球，自己做饭，和朋友散步等等。
+
+我也想和你像他们说的地中海人一样，一起吃饭，吃饭以后躺在草坪上，躺着就睡着了，我很想很想。
+
+我觉得他们说的成家之后朋友变少，很多时候是因为时间分配。但如果我真的很想和朋友一起做一件事，我会抛开我的工作。我想和你分享，我想和你说，我就可以和你说、和你 share。当然我也需要考虑你的感受，比如抱抱要考虑你是否愿意肢体接触或者当下愿不愿意，好的亲密关系不管是同学朋友亲人都要很长时间的磨合，这一直是一个ing的形式，永远不会变成have done现在完成或者ed的过去式。即使这个世界再复杂，我也会做一个非常非常纯粹的人。也许我也会改变我的想法，我也会被世界磨平，但我觉得，做一个小孩子挺好的，哈哈哈，每天乐呵呵，我愿意和每一个人都真诚的讲我的事情，我的想法。
+
+哦对了，今天我打了4把台球，赢了三把！厉害吧，是不是很有天赋。
+
+我永远不会忘记你陪我度过了我人生中最难忘、最感激的生日。其实说实话，你和 ppn 分手之后我非常非常难过，因为你的状态不好，但是我知道你不是喜欢微信轰炸的那种人，所以我没有发很多信息来问候。但是我上 lecture 每次看到你都觉得你的脸色不是很对。
+
+我们还小，是个孩子，不要活得这么沉重。我觉得在最意气风发的年纪，世界是我们的游乐场！
+
+我觉得利益交换和赋能在成年世界里很正常，人类之间很难产生。但我觉得情感和利益、钱还是不一样的，就像阿妈的情书一样。
+
+弱关系的熟人也好，搭子也好，酒肉朋友也好，运动搭子也好。我觉得你想要你的朋友成为什么角色，你可以邀请他参与你的生活的某个 part。
+
+最后，我希望你永远笑得像我朋友圈背景那样灿烂。我知道痛苦、磨难、挫折都是必然的，但是我还是想看你笑。每天乐呵呵、很开心，就想我俩从山坡上骑着电瓶车冲下去一样，然后我说不要刹车，但你说为了安全还是会稍微微刹一刹。没关系，想刹就刹，想冲就冲。你想找我充电，我也希望我能给你我的抱抱。
+
+爱你。
+`;
+const storyEl = document.getElementById('story');
+const storyContentEl = document.getElementById('storyContent');
+const hintEl = document.getElementById('hint');
+const answerEl = document.getElementById('answer');
+const imageInputEl = document.getElementById('imageInput');
+const heroImageEl = document.getElementById('heroImage');
+
+imageInputEl.addEventListener('change', handleImageUpload);
+
+function check() {
+  const input = answerEl.value.trim();
+  if (!input) {
+    showHint('请输入答案后再试。');
+    return;
+  }
+  if (input === '72808') {
+    document.getElementById('gate').style.display = 'none';
+    showStory();
+  } else {
+    showHint('再想想 🤍', true);
+    answerEl.classList.add('shake');
+    setTimeout(() => answerEl.classList.remove('shake'), 300);
+  }
+}
+
+function showHint(message, error = false) {
+  hintEl.textContent = message;
+  hintEl.style.color = error ? '#ffacb8' : '#d2c9ff';
+}
+
+function handleImageUpload(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = () => {
+    heroImageEl.src = reader.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+function showStory() {
+  storyEl.style.display = 'block';
+  storyEl.classList.add('fade-in');
+  storyContentEl.textContent = '';
+  let index = 0;
+  const interval = setInterval(() => {
+    storyContentEl.textContent += text[index];
+    index += 1;
+    if (index >= text.length) {
+      clearInterval(interval);
+    }
+  }, 20);
+}
+</script>
+</body>
+</html>
