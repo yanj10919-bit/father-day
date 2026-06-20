@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<title>Father's Day</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: "PingFang SC", "Segoe UI", Arial, sans-serif;
+    background: linear-gradient(180deg, #1b2837 0%, #0f1620 100%);
+    color: #f7f5ff;
+    overflow-x: hidden;
+  }
+  .glow {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    background: radial-gradient(circle at 20% 20%, rgba(255, 197, 145, 0.2), transparent 20%),
+                radial-gradient(circle at 80% 15%, rgba(91, 189, 255, 0.18), transparent 18%),
+                radial-gradient(circle at 50% 80%, rgba(255, 247, 180, 0.12), transparent 24%);
+    filter: blur(24px);
+  }
+  .container {
+    position: relative;
+    z-index: 1;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 32px;
+  }
+  .card {
+    width: min(840px, 100%);
+    background: rgba(12, 18, 35, 0.92);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 32px;
+    box-shadow: 0 30px 90px rgba(0, 0, 0, 0.32);
+    overflow: hidden;
+    backdrop-filter: blur(14px);
+  }
+  .hero {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    padding: 34px 36px 0;
+  }
+  .hero h1 {
+    margin: 0;
+    font-size: clamp(2.2rem, 4vw, 3.6rem);
+    line-height: 1.02;
+    letter-spacing: -0.04em;
+  }
+  .hero p {
+    margin: 20px 0 0;
+    color: #e8e6ff;
+    line-height: 1.75;
+    max-width: 48rem;
+  }
+  .hero img {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    border-radius: 24px;
+    border: 1px solid rgba(255, 255, 255, 0.09);
+    background: rgba(255, 255, 255, 0.06);
+  }
+  .gate {
+    padding: 32px 36px 36px;
+    display: grid;
+    gap: 20px;
+  }
+  .gate-title {
+    margin: 0;
+    font-size: 1.55rem;
+  }
+  .gate-copy {
+    margin: 0;
+    color: #c7d1ff;
+    line-height: 1.8;
+  }
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 14px;
+  }
+  input {
+    width: 100%;
+    padding: 16px 18px;
+    border-radius: 18px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: rgba(255, 255, 255, 0.07);
+    color: #11121a;
+    font-size: 1rem;
+    outline: none;
+  }
+  button {
+    border: none;
+    border-radius: 18px;
+    padding: 16px 24px;
+    background: linear-gradient(135deg, #ffd07f, #ff8e61);
+    color: #11101b;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+  }
+  button:hover { transform: translateY(-2px); }
+  .hint {
+    margin: 0;
+    color: #d5d7ff;
+    font-size: 0.95rem;
+  }
+  .story {
+    display: none;
+    padding: 0 36px 36px;
+  }
+  .story-content {
+    margin: 0;
+    color: #f6f4ff;
+    line-height: 1.9;
+    white-space: pre-wrap;
+    font-size: 1rem;
+  }
+  .story-note {
+    margin-top: 24px;
+    color: #c6c8eb;
+    font-size: 0.95rem;
+  }
+  .fade-in { animation: fadeIn 0.8s ease both; }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(18px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @media (max-width: 760px) {
+    .hero { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 520px) {
+    .card { border-radius: 24px; }
+    .gate { padding: 28px 22px 28px; }
+    .hero { gap: 18px; }
+    .form-row { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="glow"></div>
+<div class="container">
+  <div class="card fade-in">
+    <div class="hero">
+      <div>
+        <h1>Happy Father's Day!</h1>
+        <p>三宝节日快乐！输入正确答案即可解锁我为你准备的节日祝福。</p>
+      </div>
+      <img id="heroImage" src="father-day.jpg" alt="父亲节图片">
+    </div>
+    <div class="gate" id="gate">
+      <h2 class="gate-title">🔐 专属问题</h2>
+      <p class="gate-copy">Question：what day is it today？</p>
+      <div class="form-row">
+        <input id="answer" placeholder="填写答案" autocomplete="off">
+        <button onclick="check()">解锁</button>
+      </div>
+      <p class="hint" id="hint">提示：输入正确的节日回答。</p>
+    </div>
+    <div class="story" id="story">
+      <p class="story-content" id="storyContent"></p>
+      <p class="story-note">若图片未显示，请确认本机允许本地文件访问，或打开页面时使用浏览器本地文件模式。</p>
+    </div>
+  </div>
+</div>
+<script>
+const text = `
+Happy Father's Day! 三宝节日快乐！
+
+首先还是祝你节日快乐💗
+
+然后是希望三宝白头发少一点别秃秃头，然后体重下来💪muscle↑每天吃好睡好身体健康！✌️
+
+谢谢你当初在我很想挑战自己选择这所大学的时候支持我，支持新事物，支持探索，支持成长，我非常感恩当时的2:1投票哈哈哈哈！谢谢你站在我这边，妈妈现在也很支持我of course！
+
+然后世俗一点的：希望你早日生成局长+钱包💰鼓鼓。当然你在职位上是不是局长都无所谓，你是我最好的爸爸！所以无所谓啦，做好自己就行了。
+
+加油💪
+一起努力！
+爱你😘
+`;
+const storyEl = document.getElementById('story');
+const storyContentEl = document.getElementById('storyContent');
+const hintEl = document.getElementById('hint');
+const answerEl = document.getElementById('answer');
+
+function check() {
+  const input = answerEl.value.trim();
+  if (!input) {
+    showHint('请输入答案后再试。');
+    return;
+  }
+  if (input === "Father's Day!") {
+    document.getElementById('gate').style.display = 'none';
+    showStory();
+  } else {
+    showHint('再想想 🤍', true);
+    answerEl.classList.add('shake');
+    setTimeout(() => answerEl.classList.remove('shake'), 300);
+  }
+}
+
+function showHint(message, error = false) {
+  hintEl.textContent = message;
+  hintEl.style.color = error ? '#ffb1b1' : '#d5d7ff';
+}
+
+function showStory() {
+  storyEl.style.display = 'block';
+  storyEl.classList.add('fade-in');
+  storyContentEl.textContent = '';
+  let index = 0;
+  const interval = setInterval(() => {
+    storyContentEl.textContent += text[index];
+    index += 1;
+    if (index >= text.length) {
+      clearInterval(interval);
+    }
+  }, 22);
+}
+</script>
+</body>
+</html>
